@@ -8,14 +8,22 @@ import jpashopre.domain.item.Item;
 import jpashopre.repository.ItemRepository;
 import jpashopre.repository.MemberRepository;
 import jpashopre.repository.OrderRepository;
+import jpashopre.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
+    private final EntityManager em;
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
@@ -48,5 +56,8 @@ public class OrderService {
         order.cancel();
     }
 
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAllByString(orderSearch);
+    }
 
 }
