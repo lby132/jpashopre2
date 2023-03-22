@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.*;
+import static jpashopre.domain.DeliveryStatus.*;
+import static jpashopre.domain.OrderStatus.*;
 
 @Entity
 @Table(name = "orders")
@@ -18,8 +20,8 @@ public class Order {
 
     @Id
     @GeneratedValue
-    @JoinColumn(name = "order_id")
-    private Long Id;
+    @Column(name = "order_id")
+    private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -57,19 +59,19 @@ public class Order {
         order.setMember(member);
         order.setDelivery(delivery);
         for (OrderItem orderItem : orderItems) {
-            order.getOrderItems().add(orderItem);
+            order.addOrderItem(orderItem);
         }
-        order.setStatus(OrderStatus.ORDER);
+        order.setStatus(ORDER);
         order.setOrderDate(LocalDateTime.now());
         return order;
     }
 
     public void cancel() {
-        if (delivery.getStatus() == DeliveryStatus.COMP) {
+        if (delivery.getStatus() == COMP) {
             throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
         }
 
-        this.setStatus(OrderStatus.CANCEL);
+        this.setStatus(CANCEL);
         for (OrderItem orderItem : orderItems) {
             orderItem.cancel();
         }
