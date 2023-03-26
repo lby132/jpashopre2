@@ -1,4 +1,4 @@
-package jpashopre.repository;
+package jpashopre.repository.order.simplequery;
 
 import jpashopre.domain.Address;
 import jpashopre.domain.OrderStatus;
