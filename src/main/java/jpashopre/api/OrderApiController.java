@@ -6,6 +6,8 @@ import jpashopre.domain.OrderItem;
 import jpashopre.domain.OrderStatus;
 import jpashopre.repository.OrderRepository;
 import jpashopre.repository.OrderSearch;
+import jpashopre.repository.order.query.OrderQueryDto;
+import jpashopre.repository.order.query.OrderQueryRepository;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class OrderApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     @GetMapping("/api/v1/orders")
     public List<Order> orderV1() {
@@ -40,14 +43,14 @@ public class OrderApiController {
     @GetMapping("/api/v2/orders")
     public List<OrderDto> orderV2() {
         return orderRepository.findAllByString(new OrderSearch()).stream()
-                .map(o -> new OrderDto(o))
+                .map(OrderDto::new)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/api/v3/orders")
     public List<OrderDto> orderV3() {
         return orderRepository.findAllWithItem().stream()
-                .map(o -> new OrderDto(o))
+                .map(OrderDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -56,10 +59,16 @@ public class OrderApiController {
             @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "100") int limit
     ) {
-        return orderRepository.findAllWithMemberDelivery2(offset, limit).stream()
+        return orderRepository.findAllWithMemberDelivery(offset, limit).stream()
                 .map(OrderDto::new)
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/api/v4/orders")
+    public List<OrderQueryDto> orderV4() {
+        return orderQueryRepository.findOrderQueryDtos();
+    }
+
 
     @Data
     static class OrderDto {
